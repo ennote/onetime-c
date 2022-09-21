@@ -1,0 +1,99 @@
+# Default values for ennote-onetime-c.
+# This is a YAML-formatted file.
+# Declare name/value pairs to be passed into your templates.
+# name: value
+
+
+## Overrides for generated resource names
+# See templates/_helpers.tpl
+# nameOverride:
+# fullnameOverride:
+#namespaceOverride: ennote
+
+#Name of your client
+customerName: Default
+
+# ennote StatefulSet custom labels
+statefulSetLabels: {}
+#   foo: bar
+#   bar: foo
+
+# ennote StatefulSet annotations
+statefulSetAnnotations: {}
+
+# StatefulSet updateStrategy
+# ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
+updateStrategy: {}
+
+# Put labels on ennote pod
+podLabels: {}
+
+# Node selector
+# ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+nodeSelector: {}
+
+image:
+  repo: registry.ennote.dev/ennote/onetime-c
+  tag: latest
+  pullPolicy: Always
+
+secret:
+  name: ennote-onetime
+
+# Optionally specify additional environment variables to be populated from Kubernetes secrets.
+# Useful for passing in TF_VAR_foo or other secret environment variables from Kubernetes secrets.
+environmentSecrets: []
+# environmentSecrets:
+#   - name: THE_ENV_VAR
+#     secretKeyRef:
+#       name: the_k8s_secret_name
+#       key: the_key_of_the_value_in_the_secret
+
+# Container securityContext
+containerSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  allowPrivilegeEscalation: false
+
+# name of the secret to be used for image pulling
+#imagePullSecretName:
+
+service:
+  # For minikube, set this to NodePort, elsewhere use LoadBalancer
+  # Use ClusterIP if your setup includes ingress controller
+  type: NodePort
+  port: 8080
+  targetPort: 8080
+  # Optionally assign a known public LB IP
+  #loadBalancerIP:
+  # LoadBalancerSourcesRange is a list of allowed CIDR values, which are combined with ServicePort to
+  # set allowed inbound rules on the security group assigned to the controller load balancer
+  loadBalancerSourceRanges:
+    - 0.0.0.0/0
+  # ennote service labels
+  labels: {}
+  #   service.beta.kubernetes.io/aws-load-balancer-backend-protocol: https
+  # Put labels on ennote pod
+  # ennote service annotations
+  annotations: {}
+
+
+ingress:
+  enabled: false
+  # For Kubernetes v1.14+, use 'networking.k8s.io/v1beta1'
+  # For Kubernetes v1.19+, use 'networking.k8s.io/v1'
+  apiVersion: "networking.k8s.io/v1"
+  labels: {}
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
+  # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
+  # ingressClassName: nginx
+  # Set this path to jenkinsUriPrefix above or use annotations to rewrite path
+  # path: "/ennote"
+  hostName:
+  tls:
+  # - secretName: ennote-onetime-c.example.com
+  #   hosts:
+  #     - ennote-onetime-c.example.com

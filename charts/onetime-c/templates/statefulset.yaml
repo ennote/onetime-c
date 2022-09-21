@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "ennote.name" . }}
+  namespace: {{ template "ennote.namespace" . }}
+  labels:
+    "app.kubernetes.io/name": '{{ template "ennote.name" .}}'
+    "helm.sh/chart": "{{ template "ennote.label" .}}"
+    "app.kubernetes.io/managed-by": "{{ .Release.Service }}"
+    "app.kubernetes.io/instance": "{{ .Release.Name }}"
+    {{- range $key, $val := .Values.statefulSetLabels }}
+    {{ $key }}: {{ $val | quote }}
+    {{- end}}
+  {{- if .Values.statefulSetAnnotations }}
+  annotations:
+  {{ toYaml .Values.statefulSetAnnotations | indent 4 }}
+  {{- end }}
+spec:
+  serviceName: {{ template "ennote.name" . }}
+  replicas: 1
+  selector:
+    matchLabels:
+      "app.kubernetes.io/instance": "{{ .Release.Name }}"
+  {{- if .Values.updateStrategy }}
+  updateStrategy:
+  {{ toYaml .Values.updateStrategy | indent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        "app.kubernetes.io/name": '{{ template "ennote.name" .}}'
+        "app.kubernetes.io/managed-by": "{{ .Release.Service }}"
+        "app.kubernetes.io/instance": "{{ .Release.Name }}"
+        {{- range $key, $val := .Values.podLabels }}
+        {{ $key }}: {{ $val | quote }}
+        {{- end}}
+    spec:
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+      {{ toYaml .Values.nodeSelector | indent 8 }}
+      {{- end }}
+      containers:
+        - name: ennote-onetime-c
+          image: "{{ .Values.image.repo }}:{{ .Values.image.tag }}"
+          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+          {{- if .Values.containerSecurityContext }}
+          securityContext: {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+          {{- end }}
+          env:
+            {{- range .Values.environmentSecrets }}
+            - name: {{ .name }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .secretKeyRef.name }}
+                  key: {{ .secretKeyRef.key }}
+            {{- end }}
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: SECRET_KEY
+                  optional: false
+            - name: INITIALIZATION_VECTOR
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: INITIALIZATION_VECTOR
+                  optional: false
+            - name: CUSTOMER_NAME
+              value: {{ .Values.customerName | quote }}
+          ports:
+            - containerPort: {{.Values.service.targetPort}}
+{{- if .Values.imagePullSecretName }}
+        imagePullSecrets:
+          - name: {{ .Values.imagePullSecretName }}
+          {{- end -}}
