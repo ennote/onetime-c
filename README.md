@@ -18,7 +18,7 @@ Please refer to Helm's [documentation](https://helm.sh/docs/) to get started.
 Once Helm is set up properly, add the repo as follows:
 
 ```console
-helm repo add ennote https://ennote.github.io
+helm repo add ennote https://charts.ennote.dev
 ```
 
 Chart documentation is available in [our web site](https://ennote.dev/onetime/docs).
