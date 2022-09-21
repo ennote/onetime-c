@@ -5,7 +5,6 @@
 [![Lint Code Base](https://github.com/ennote/onetime-c/actions/workflows/linter.yaml/badge.svg)](https://github.com/ennote/onetime-c/actions/workflows/linter.yaml)
 [![Lint and Test Charts](https://github.com/ennote/onetime-c/actions/workflows/lint-test.yaml/badge.svg)](https://github.com/ennote/onetime-c/actions/workflows/lint-test.yaml)
 [![Release Charts](https://github.com/ennote/onetime-c/actions/workflows/release.yaml/badge.svg)](https://github.com/ennote/onetime-c/actions/workflows/release.yaml)
-[![pages-build-deployment](https://github.com/ennote/onetime-c/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/ennote/onetime-c/actions/workflows/pages/pages-build-deployment)
 
 
 The code is provided as-is with no warranties.
