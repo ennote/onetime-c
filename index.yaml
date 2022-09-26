@@ -12,4 +12,15 @@ entries:
     urls:
     - https://github.com/ennote/onetime-c/releases/download/ennote-onetime-c-1.0.0/ennote-onetime-c-1.0.0.tgz
     version: 1.0.0
-generated: "2022-09-21T18:35:33.587955026Z"
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2022-09-26T12:18:05.923898225Z"
+    description: Keep your data (credentials, SSH keys, private notes) secure.
+    digest: f395a1f02bd907e22233417fe26baabae14fa96498680e98e835b26da3acc9de
+    home: https://ennote.dev
+    name: ennote-onetime-c
+    type: application
+    urls:
+    - https://github.com/ennote/onetime-c/releases/download/ennote-onetime-c-1.0.0-1/ennote-onetime-c-1.0.0-1.tgz
+    version: 1.0.0-1
+generated: "2022-09-26T12:18:05.923905525Z"
