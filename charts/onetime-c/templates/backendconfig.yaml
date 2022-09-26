@@ -1,0 +1,18 @@
+{{- if .Values.backendconfig.enabled }}
+apiVersion: {{ .Values.backendconfig.apiVersion }}
+kind: BackendConfig
+metadata:
+  name: {{ .Values.backendconfig.name }}
+  namespace: {{ template "ennote.namespace" . }}
+  labels:
+  {{- include "ennote.labels" . | nindent 4 }}
+  {{- if .Values.backendconfig.labels }}
+  {{ toYaml .Values.backendconfig.labels | indent 4 }}
+  {{- end }}
+{{- if .Values.backendconfig.annotations }}
+  annotations:
+{{ toYaml .Values.backendconfig.annotations | indent 4 }}
+{{- end }}
+spec:
+{{ toYaml .Values.backendconfig.spec | indent 2 }}
+{{- end }}
