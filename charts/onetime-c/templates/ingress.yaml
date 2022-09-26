@@ -1,20 +1,19 @@
+{{- if .Values.ingress.enabled -}}
+{{- $apiVersion := "extensions/v1beta1" -}}
+{{- if .Values.ingress.apiVersion -}}
+{{- $apiVersion = .Values.ingress.apiVersion -}}
+{{- else if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" -}}
+{{- $apiVersion = "networking.k8s.io/v1" -}}
+{{- else if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta/Ingress" -}}
+{{- $apiVersion = "networking.k8s.io/v1beta" -}}
+{{- end -}}
 {{- $kubeTargetVersion := default .Capabilities.KubeVersion.GitVersion .Values.kubeTargetVersionOverride }}
-  {{- if .Values.ingress.enabled }}
-  {{- if semverCompare ">=1.19-0" $kubeTargetVersion -}}
-apiVersion: networking.k8s.io/v1
-  {{- else if semverCompare ">=1.14-0" $kubeTargetVersion -}}
-apiVersion: networking.k8s.io/v1beta1
-  {{- else -}}
-apiVersion: {{ .Values.ingress.apiVersion }}
-  {{- end }}
+apiVersion: {{ $apiVersion }}
 kind: Ingress
 metadata:
   namespace: {{ template "ennote.namespace" . }}
   labels:
-    "app.kubernetes.io/name": '{{ template "ennote.name" .}}'
-    "helm.sh/chart": "{{ template "ennote.label" .}}"
-    "app.kubernetes.io/managed-by": "{{ .Release.Service }}"
-    "app.kubernetes.io/instance": "{{ .Release.Name }}"
+  {{- include "ennote.labels" . | nindent 4 }}
   {{- if .Values.ingress.labels }}
   {{ toYaml .Values.ingress.labels | indent 4 }}
   {{- end }}
@@ -24,48 +23,51 @@ metadata:
     {{- end }}
   name: {{ template "ennote.name" . }}
 spec:
-    {{- if .Values.ingress.ingressClassName }}
+{{- if .Values.ingress.ingressClassName }}
   ingressClassName: {{ .Values.ingress.ingressClassName | quote }}
-    {{- end }}
+{{- end }}
   rules:
     - http:
         paths:
-    {{- if empty (.Values.ingress.paths) }}
-        - backend:
-          {{- if semverCompare ">=1.19-0" $kubeTargetVersion }}
-            service:
-              name: {{ template "ennote.name" . }}
-              port:
-                number: {{ .Values.service.port }}
-          pathType: ImplementationSpecific
-            {{- else }}
-            serviceName: {{ template "ennote.name" . }}
-            servicePort: {{ .Values.service.port }}
-            {{- end }}
-            {{- if .Values.ingress.path }}
-          path: {{ .Values.ingress.path }}
-  {{- end -}}
-  {{- else }}
-  {{ tpl (toYaml .Values.ingress.paths | indent 6) . }}
-  {{- end -}}
-     {{- if .Values.ingress.resourceRootUrl }}
+{{- if empty (.Values.ingress.paths) }}
+          - backend:
+{{- if semverCompare ">=1.19-0" $kubeTargetVersion }}
+              service:
+                name: {{ template "ennote.name" . }}
+                port:
+                  number: {{ .Values.service.port }}
+            pathType: ImplementationSpecific
+{{- else }}
+              serviceName: {{ template "ennote.name" . }}
+              servicePort: {{ .Values.service.port }}
+{{- end }}
+{{- if .Values.ingress.path }}
+            path: {{ .Values.ingress.path }}
+{{- end -}}
+{{- else }}
+{{ tpl (toYaml .Values.ingress.paths | indent 6) . }}
+{{- end -}}
+{{- if .Values.ingress.hostName }}
+      host: {{ .Values.ingress.hostName | quote }}
+{{- end }}
+{{- if .Values.ingress.resourceRootUrl }}
     - http:
         paths:
-        - backend:
-    {{- if semverCompare ">=1.19-0" $kubeTargetVersion }}
-            service:
-              name: {{ template "ennote.name" . }}
-              port:
-                number: {{ .Values.service.port }}
-          pathType: ImplementationSpecific
-            {{- else }}
-            serviceName: {{ template "ennote.name" . }}
-            servicePort: {{ .Values.service.port }}
-      {{- end }}
+          - backend:
+{{- if semverCompare ">=1.19-0" $kubeTargetVersion }}
+              service:
+                name: {{ template "ennote.name" . }}
+                port:
+                  number: {{ .Values.service.port }}
+            pathType: ImplementationSpecific
+{{- else }}
+              serviceName: {{ template "ennote.name" . }}
+              servicePort: {{ .Values.service.port }}
+{{- end }}
       host: {{ .Values.ingress.resourceRootUrl | quote }}
-      {{- end }}
-  {{- if .Values.ingress.tls }}
+{{- end }}
+{{- if .Values.ingress.tls }}
   tls:
-    {{ toYaml .Values.ingress.tls | indent 4 }}
-    {{- end -}}
-    {{- end }}
+{{ toYaml .Values.ingress.tls | indent 4 }}
+{{- end -}}
+{{- end }}

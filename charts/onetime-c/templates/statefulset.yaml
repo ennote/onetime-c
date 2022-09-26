@@ -4,10 +4,7 @@ metadata:
   name: {{ template "ennote.name" . }}
   namespace: {{ template "ennote.namespace" . }}
   labels:
-    "app.kubernetes.io/name": '{{ template "ennote.name" .}}'
-    "helm.sh/chart": "{{ template "ennote.label" .}}"
-    "app.kubernetes.io/managed-by": "{{ .Release.Service }}"
-    "app.kubernetes.io/instance": "{{ .Release.Name }}"
+    {{- include "ennote.labels" . | nindent 4 }}
     {{- range $key, $val := .Values.statefulSetLabels }}
     {{ $key }}: {{ $val | quote }}
     {{- end}}

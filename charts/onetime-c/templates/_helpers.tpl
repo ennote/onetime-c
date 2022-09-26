@@ -37,8 +37,21 @@ Allow the release namespace to be overridden for multi-namespace deployments in 
 {{- end -}}
 
 {{/*
-Expand the label of the chart.
+Create chart name and version as used by the chart label.
 */}}
-{{- define "ennote.label" -}}
-{{- printf "%s-%s" (include "ennote.name" .) .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+{{- define "ennote.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Common labels
+*/}}
+{{- define "ennote.labels" -}}
+app: {{ template "ennote.name" . }}
+chart: {{ template "ennote.chart" . }}
+release: {{ .Release.Name }}
+heritage: {{ .Release.Service }}
+{{- if .Values.commonLabels}}
+{{ toYaml .Values.commonLabels }}
+{{- end }}
 {{- end -}}

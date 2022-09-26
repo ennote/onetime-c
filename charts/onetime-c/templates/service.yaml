@@ -4,19 +4,14 @@ metadata:
   name: {{template "ennote.name" . }}
   namespace: {{ template "ennote.namespace" . }}
   labels:
-    "app.kubernetes.io/name": '{{ template "ennote.name" .}}'
-    {{- if .Values.renderHelmLabels }}
-    "helm.sh/chart": "{{ template "ennote.label" .}}"
-    {{- end }}
-    "app.kubernetes.io/managed-by": "{{ .Release.Service }}"
-    "app.kubernetes.io/instance": "{{ .Release.Name }}"
+    {{- include "ennote.labels" . | nindent 4 }}
     {{- if .Values.service.labels }}
-  {{ toYaml .Values.service.labels | indent 4 }}
-  {{- end }}
-  {{- if .Values.service.annotations }}
-annotations:
-  {{ toYaml .Values.service.annotations | indent 4 }}
-  {{- end }}
+    {{ toYaml .Values.service.labels | indent 4 }}
+    {{- end }}
+    {{- if .Values.service.annotations }}
+  annotations:
+    {{ toYaml .Values.service.annotations | indent 4 }}
+    {{- end }}
 spec:
   {{- if (and (eq .Values.service.type "ClusterIP") (not (empty .Values.service.clusterIP))) }}
   clusterIP: {{.Values.service.clusterIP}}
