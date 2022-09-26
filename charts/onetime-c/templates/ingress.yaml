@@ -14,7 +14,6 @@ metadata:
     "app.kubernetes.io/name": '{{ template "ennote.name" .}}'
     "helm.sh/chart": "{{ template "ennote.label" .}}"
     "app.kubernetes.io/managed-by": "{{ .Release.Service }}"
-    "app.kubernetes.io/instance": "{{ .Release.Name }}"
   {{- if .Values.ingress.labels }}
   {{ toYaml .Values.ingress.labels | indent 4 }}
   {{- end }}
