@@ -3,5 +3,5 @@ name: ennote-onetime-c
 home: https://ennote.dev
 description: Keep your data (credentials, SSH keys, private notes) secure.
 type: application
-version: 1.0.0-5
+version: 1.1.0
 appVersion: 1.0.0
