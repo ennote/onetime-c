@@ -17,10 +17,10 @@ metadata:
   {{- if .Values.ingress.labels }}
   {{ toYaml .Values.ingress.labels | indent 4 }}
   {{- end }}
-  {{- if .Values.ingress.annotations }}
+{{- if .Values.ingress.annotations }}
   annotations:
-    {{ toYaml .Values.ingress.annotations | indent 4 }}
-    {{- end }}
+{{ toYaml .Values.ingress.annotations | indent 4 }}
+{{- end }}
   name: {{ template "ennote.name" . }}
 spec:
 {{- if .Values.ingress.ingressClassName }}
